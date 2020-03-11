@@ -1,5 +1,6 @@
 package FinalProject;
 
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -33,17 +34,22 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 
 
 
-    javafx.scene.canvas.Canvas mCanvas = new Canvas(400,400);
-
+    javafx.scene.canvas.Canvas mCanvas;
+    BorderPane root;
+    Scene scene;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
 
-        BorderPane root = new BorderPane();
-
-
+        root = new BorderPane();
+        scene = new Scene(root, 400, 400);
+        mCanvas = new Canvas(scene.getWidth(),scene.getHeight()-20);
+//        mCanvas.widthProperty().addListener(event->resizable());
+//        mCanvas.heightProperty().addListener(event->resizable());
+//        mCanvas.widthProperty().bind(root.widthProperty());
+//        mCanvas.heightProperty().bind(root.heightProperty());
         Maze maze = new Maze(mCanvas);
-        PacMan pacMan = new PacMan(mCanvas,maze);
+        PacMan pacMan = new PacMan(mCanvas,maze,scene);
 
 
 
@@ -56,9 +62,26 @@ public class Main extends Application implements EventHandler<ActionEvent> {
         root.setBottom(toolBar);
         primaryStage.setTitle("AshMan");
         root.setTop(buildMenuBar());
-        primaryStage.setScene(new Scene(root, 400, 400));
+        primaryStage.setScene(scene);
         primaryStage.show();
+
+        //STARTED GAME
+//        AnimationTimer gameStarted = new AnimationTimer() {
+//            @Override
+//            public void handle(long now) {
+//                pacMan.processInput();
+//            }
+//        };
+//        gameStarted.start();
     }
+
+//    private void resizable(){
+//        double width = root.getWidth();
+//        double height = root.getHeight();
+//
+//        GraphicsContext gc = mCanvas.getGraphicsContext2D();
+//
+//    }
 
     private void onAbout(){
         Alert alert = new Alert(Alert.AlertType.INFORMATION) ;

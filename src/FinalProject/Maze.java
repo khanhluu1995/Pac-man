@@ -19,10 +19,11 @@ public class Maze{
     MazeObjects[][] actualMaze = new MazeObjects[20][20];
     GraphicsContext graphicsContext;
     Canvas mCanvas;
-    final int obstacleSize = 20;
+    double obstacleSize;
 
 
     public Maze(Canvas mCanvas) throws IOException {
+        obstacleSize = mCanvas.getWidth()/actualMaze.length;
         graphicsContext = mCanvas.getGraphicsContext2D();
         GraphicsContext graphicsContext = mCanvas.getGraphicsContext2D();
         graphicsContext.setFill(Color.LIGHTBLUE);
