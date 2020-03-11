@@ -10,14 +10,14 @@ public class SpriteAnimation extends Transition {
 	
 	  private ImageView imageView, imageView2, imageView3, imageView4, imageView5;
 	  private int count = 0, count1 = 0, count2 = 0, count3 = 0;
-	  Pacman pac;
+	  PacManGit pac;
 	  Ghost ghost, ghost2, ghost3, ghost4;
 	  boolean dead;
 	  
-	  public SpriteAnimation(ImageView imageView, Duration duration, Pacman pac, ImageView imageView2, Ghost ghost , 
-			  																	 ImageView imageView3, Ghost ghost2, 
-			  																	 ImageView imageView4, Ghost ghost3,
-			  																	 ImageView imageView5, Ghost ghost4
+	  public SpriteAnimation(ImageView imageView, Duration duration, PacManGit pac, ImageView imageView2, Ghost ghost ,
+							 ImageView imageView3, Ghost ghost2,
+							 ImageView imageView4, Ghost ghost3,
+							 ImageView imageView5, Ghost ghost4
 			  																								)
 	  {
 		  
@@ -28,11 +28,11 @@ public class SpriteAnimation extends Transition {
 		  this.imageView5 = imageView5;
 		  
 		  this.ghost = ghost;
-		  this.ghost2 = this.ghost2;
-		  this.ghost3 = this.ghost3;
-		  this.ghost4 = this.ghost4;
+		  this.ghost2 = ghost2;
+		  this.ghost3 = ghost3;
+		  this.ghost4 = ghost4;
 
-		  this.dead = dead;
+		  this.dead = false;
 		  
 		  this.pac = pac;
 		  setCycleDuration(duration);

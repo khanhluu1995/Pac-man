@@ -1,10 +1,11 @@
 package FinalProject;
 
 import javafx.animation.Animation;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 
-public class Pacman extends Sprite {
+public class PacManGit extends Sprite{
 
     private Control control;
     private double speed;
@@ -12,8 +13,10 @@ public class Pacman extends Sprite {
     boolean timer;
     Animation animation;
     protected int movement;
-    
-    public Pacman(Pane layer, Image image, double x, double y, double dx, double dy, double speed, Control control, MySounds ms) {
+    GraphicsContext graphicsContext;
+    Maze pacmanOnMaze;
+
+    public PacManGit(Pane layer, Image image, double x, double y, double dx, double dy, double speed, Control control, MySounds ms) {
 
         super(layer, image, x, y,  dx, dy);
 
@@ -23,6 +26,8 @@ public class Pacman extends Sprite {
         
         
     }
+
+
 
     public void setSpeed(double speed) {
     	this.speed = speed;

@@ -35,19 +35,25 @@ public class Maze{
 
 //        insertObs();
         readMap();
-
     }
 
-    private void drawObstacle(int x, int y){
+    private void drawObstacle(int y, int x){
         graphicsContext.save();
         graphicsContext.setFill(Color.PAPAYAWHIP);
-        graphicsContext.fillRect(x,y,obstacleSize,obstacleSize);
+        graphicsContext.fillRect(x*20,y*20,obstacleSize,obstacleSize);
         graphicsContext.restore();
-        actualMaze[y/obstacleSize][x/obstacleSize].setWall(true);
+        actualMaze[y][x].setWall(true);
+    }
+
+    private void drawCake(int y, int x){
+        graphicsContext.save();
+        graphicsContext.setFill(Color.ORCHID);
+        graphicsContext.fillOval(x*20+5,y*20+5,obstacleSize/2,obstacleSize/2);
+        graphicsContext.restore();
     }
 
     private void readMap() throws IOException {
-        File file = new File("C:\\Users\\nessy\\IdeaProjects\\CSCD370Final\\maze");
+        File file = new File("maze");
         Scanner scanner = new Scanner(file);
         int i = 0;
         int j = 0;
@@ -56,19 +62,33 @@ public class Maze{
             s = scanner.next();
             if(j == 19){
                 if(s.equals("O")){
-                    drawObstacle(j*20,i*20);
+                    drawObstacle(i,j);
+                }else {
+                    drawCake(i,j);
                 }
                 i++;
                 j=0;
             }
             else {
                 if(s.equals("O")){
-                    drawObstacle(j*20,i*20);
+                    drawObstacle(i,j);
+                }
+                else {
+                    drawCake(i,j);
                 }
                 j++;
             }
         }
+    }//END OF READ MAP
+
+    private void removeCake(int y, int x){
+        graphicsContext.save();
+        graphicsContext.setFill(Color.LIGHTBLUE);
+        graphicsContext.fillRect(x*20,y*20,obstacleSize,obstacleSize);
+        graphicsContext.restore();
+        actualMaze[y][x].setCake(false);
     }
+
 
 
 

@@ -31,7 +31,7 @@ public class Game extends Application {
     MySounds mySounds;
     boolean respawn = false, respawn2 = false, respawn3 = false, respawn4 = false;
     protected ArrayList<Rectangle> r;
-    protected Pacman player;
+    protected PacManGit player;
     protected ArrayList<Ghost> enemies = new ArrayList<>();
 
     ArrayList<Circle> dots;
@@ -295,7 +295,7 @@ public class Game extends Application {
         double x = (Settings.SCENE_WIDTH - image.getWidth()) / 2.0;
         double y = 412;
 
-        player = new Pacman(playfieldLayer, image, x, y, 0, 0, 1, control,mySounds);
+        player = new PacManGit(playfieldLayer, image, x, y, 0, 0, 1, control,mySounds);
 
 
         Image image2 = enemyImage;

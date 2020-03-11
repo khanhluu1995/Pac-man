@@ -43,6 +43,7 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 
 
         Maze maze = new Maze(mCanvas);
+        PacMan pacMan = new PacMan(mCanvas,maze);
 
 
 
