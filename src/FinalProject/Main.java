@@ -8,7 +8,13 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
@@ -19,6 +25,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 
@@ -26,48 +33,20 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 
 
 
+    javafx.scene.canvas.Canvas mCanvas = new Canvas(400,400);
+
 
     @Override
     public void start(Stage primaryStage) throws Exception{
 
         BorderPane root = new BorderPane();
-        Group group = new Group();
 
-        GridPane maze = new GridPane();
-        for (int i = 0; i < 20;i++) {
-            for (int j = 0; j < 20; j++) {
-                MazeGrid mazeGrid = new MazeGrid();
-                mazeGrid.setFill(Color.CYAN);
-                maze.add(mazeGrid, i, j, 1, 1);
-            }
-        }
 
-        Circle circle = new Circle(4);
-        circle.setFill(Color.WHITE);
-
-        maze.getChildren().add(4, circle);
-
-        maze.getChildren().remove(21);
-        maze.getChildren().remove(2);
+        Maze maze = new Maze(mCanvas);
 
 
 
-
-
-
-        //START TO BUILD THE CUSTOMIZE MAZE MANUALLY
-
-        maze.setAlignment(Pos.CENTER);
-
-
-
-        VBox vBox = new VBox();
-
-        vBox.getChildren().add(maze);
-
-
-
-        root.setCenter(vBox);
+        root.setCenter(mCanvas);
 
 
 
@@ -76,7 +55,7 @@ public class Main extends Application implements EventHandler<ActionEvent> {
         root.setBottom(toolBar);
         primaryStage.setTitle("AshMan");
         root.setTop(buildMenuBar());
-        primaryStage.setScene(new Scene(root, 400, 500));
+        primaryStage.setScene(new Scene(root, 400, 400));
         primaryStage.show();
     }
 
