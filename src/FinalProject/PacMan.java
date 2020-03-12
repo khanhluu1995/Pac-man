@@ -92,7 +92,7 @@ public class PacMan extends MazeMovableObjects implements Serializable {
         }
 
     private void onTimer(long now) {
-        
+
 
     }
 
