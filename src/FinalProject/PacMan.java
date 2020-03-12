@@ -25,6 +25,7 @@ public class PacMan extends MazeMovableObjects implements Serializable {
     AnimationTimer at;
     int destination = 0;
 
+
     public PacMan(Canvas mCanvas, Maze maze, Scene mScene) {
         super(mCanvas,maze);
         this.life = 2;
@@ -62,6 +63,7 @@ public class PacMan extends MazeMovableObjects implements Serializable {
 
     private void move(){
 
+        isMoving = true;
         at = new AnimationTimer() {
             @Override
             public void handle(long now) {
@@ -80,12 +82,12 @@ public class PacMan extends MazeMovableObjects implements Serializable {
 
                             else if(distance == 0){
 
+                                isMoving = false;
                                 System.out.println("pacman position move in pixels: " + x + ", " + y);
                                 updatePos(iPos - 1, jPos);
                             }
 
                         } else {
-                            isMoving = false;
                             System.out.println("stuck");
                             at.stop();
                         }
@@ -103,10 +105,10 @@ public class PacMan extends MazeMovableObjects implements Serializable {
                             }
 
                             else if(distance == 0){
+                                isMoving = false;
                                 updatePos(iPos + 1, jPos);
                             }
                         } else {
-                            isMoving = false;
                             System.out.println("stuck");
                             at.stop();
                         }
@@ -124,10 +126,10 @@ public class PacMan extends MazeMovableObjects implements Serializable {
                             }
 
                             else if(distance == 0){
+                                isMoving = false;
                                 updatePos(iPos, jPos+ 1);
                             }
                         } else {
-                            isMoving = false;
                             System.out.println("stuck");
                             at.stop();
                         }
@@ -145,10 +147,10 @@ public class PacMan extends MazeMovableObjects implements Serializable {
                             }
 
                             else if(distance == 0){
+                                isMoving = false;
                                 updatePos(iPos, jPos - 1);
                             }
                         } else {
-                            isMoving = false;
                             System.out.println("stuck");
                             at.stop();
                         }
@@ -157,6 +159,64 @@ public class PacMan extends MazeMovableObjects implements Serializable {
             }
         };
         at.start();
+    }
+    private void addlistener(Scene scene){
+        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                switch (event.getCode()){
+                    case UP:
+                        if(!moveTo.equals("up") && !isMoving) {
+                            moveTo = "up";
+                            move();
+                        }
+                        else {
+                            at.stop();
+                            updatePos(iPos-1,jPos);
+                            isMoving=false;
+                        }
+                        break;
+                    case DOWN:
+                        if(!moveTo.equals("down")&& !isMoving) {
+                            moveTo = "down";
+                            move();
+                        }
+                        else {
+                            at.stop();
+                            updatePos(iPos+1,jPos);
+                            isMoving=false;
+
+                        }
+                        break;
+                    case LEFT:
+                        if(!moveTo.equals("left")&& !isMoving) {
+                            moveTo = "left";
+                            move();
+                        }
+                        else {
+                            at.stop();
+                            updatePos(iPos,jPos-1);
+                            isMoving=false;
+                        }
+                        break;
+                    case RIGHT:
+                        if(!moveTo.equals("right")&& !isMoving) {
+                            moveTo = "right";
+                            move();
+                        }
+                        else {
+                            at.stop();
+                            updatePos(iPos,jPos+1);
+                            isMoving=false;
+                        }
+                        break;
+
+                    default:
+                        System.out.println("Invalid Key Press!");
+                        break;
+                }
+            }
+        });
     }
 
 
@@ -209,42 +269,5 @@ public class PacMan extends MazeMovableObjects implements Serializable {
     public void setMoving(boolean moving) {
         isMoving = moving;
     }
-    private void addlistener(Scene scene){
-        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                isMoving = true;
-                switch (event.getCode()){
-                    case UP:
-                        if(!moveTo.equals("up")) {
-                            moveTo = "up";
-                            move();
-                        }
-                        break;
-                    case DOWN:
-                        if(!moveTo.equals("down")) {
-                            moveTo = "down";
-                            move();
-                        }
-                        break;
-                    case LEFT:
-                        if(!moveTo.equals("left")) {
-                            moveTo = "left";
-                            move();
-                        }
-                        break;
-                    case RIGHT:
-                        if(!moveTo.equals("right")) {
-                            moveTo = "right";
-                            move();
-                        }
-                        break;
 
-                    default:
-                        System.out.println("Invalid Key Press!");
-                        break;
-                }
-            }
-        });
-    }
 }
