@@ -11,15 +11,17 @@ import javafx.scene.shape.Circle;
 import javax.swing.text.html.ImageView;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 
 public class Maze{
-    Circle dot;
     MazeObjects[][] actualMaze = new MazeObjects[20][20];
     GraphicsContext graphicsContext;
     Canvas mCanvas;
     double obstacleSize;
+    int cake = 399;
+
 
 
     public Maze(Canvas mCanvas) throws IOException {
@@ -34,7 +36,7 @@ public class Maze{
             }
         }
 
-//        insertObs();
+
         readMap();
     }
 
@@ -44,6 +46,7 @@ public class Maze{
         graphicsContext.fillRect(x*20,y*20,obstacleSize,obstacleSize);
         graphicsContext.restore();
         actualMaze[y][x].setWall(true);
+        cake--;
     }
 
     private void drawCake(int y, int x){
@@ -82,7 +85,7 @@ public class Maze{
         }
     }//END OF READ MAP
 
-    private void removeCake(int y, int x){
+    public void removeCake(int y, int x){
         graphicsContext.save();
         graphicsContext.setFill(Color.LIGHTBLUE);
         graphicsContext.fillRect(x*20,y*20,obstacleSize,obstacleSize);
