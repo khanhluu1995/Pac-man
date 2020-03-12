@@ -42,7 +42,7 @@ public class Main extends Application implements EventHandler<ActionEvent> {
     public void start(Stage primaryStage) throws Exception{
 
         root = new BorderPane();
-        scene = new Scene(root, 400, 405);
+        scene = new Scene(root, 400, 425);
         mCanvas = new Canvas(scene.getWidth(),scene.getHeight());
 //        mCanvas.widthProperty().addListener(event->resizable());
 //        mCanvas.heightProperty().addListener(event->resizable());
@@ -50,7 +50,6 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 //        mCanvas.heightProperty().bind(root.heightProperty());
         Maze maze = new Maze(mCanvas);
         PacMan pacMan = new PacMan(mCanvas,maze,scene);
-        maze.removeCake((int)pacMan.x,(int)pacMan.y);
         int numGhosts = 2;
         ArrayList<Ghost> ghosts = new ArrayList<>();
 

@@ -11,6 +11,7 @@ public class Ghost extends MazeMovableObjects implements Serializable {
 
     public Ghost(Canvas mCanvas, Maze maze) {
         super(mCanvas, maze);
+        initialPosition();
     }
 
     @Override
@@ -20,6 +21,7 @@ public class Ghost extends MazeMovableObjects implements Serializable {
 
     public boolean eatPacMan(PacMan pacMan){
         if (pacMan.iPos== this.iPos && pacMan.jPos == this.jPos){
+            pacMan.life--;
             return true;
         }
         else return false;

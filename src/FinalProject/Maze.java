@@ -85,12 +85,12 @@ public class Maze{
         }
     }//END OF READ MAP
 
-    public void removeCake(int y, int x){
+    public void removeCake(int x, int y){
         graphicsContext.save();
         graphicsContext.setFill(Color.LIGHTBLUE);
-        graphicsContext.fillRect(x*20,y*20,obstacleSize,obstacleSize);
+        graphicsContext.fillRect(x,y,obstacleSize,obstacleSize);
         graphicsContext.restore();
-        actualMaze[y][x].setCake(false);
+        actualMaze[y/20][x/20].setCake(false);
     }
 
 

@@ -10,12 +10,11 @@ public abstract class MazeMovableObjects {
     GraphicsContext graphicsContext;
     Maze maze;
     int iPos =0; int jPos = 0;
-    double x,y;
+    int x,y;
 
     public MazeMovableObjects(Canvas mCanvas, Maze maze) {
         this.graphicsContext = mCanvas.getGraphicsContext2D();
         this.maze = maze;
-        initialPosition();
     }
 
     protected void initialPosition(){
@@ -24,6 +23,7 @@ public abstract class MazeMovableObjects {
             Random random = new Random();
             iPos = random.nextInt(20);
             jPos = random.nextInt(20);
+
             if(!maze.actualMaze[iPos][jPos].getWall()){
                 drawObject();
                 isGoodPos = true;
@@ -32,21 +32,29 @@ public abstract class MazeMovableObjects {
     }
 
     protected void drawObject(){
-        setX();
-        setY();
+        setX(jPos);
+        setY(iPos);
         graphicsContext.save();
+
         graphicsContext.setFill(Color.ORANGERED);
         graphicsContext.fillOval(x,y,maze.actualMaze.length,maze.actualMaze.length);
         graphicsContext.restore();
+
+        System.out.println("ghost position in pixels: " + x + ", " + y);
+
+    }
+
+    public int converter(int pos) {
+        return pos*20;
     }
 
 
 
-    public void setX(){
+    public void setX(int jPos){
         x = jPos*20;
     }
 
-    public void setY(){
+    public void setY(int iPos){
         y = iPos*20;
     }
 }
