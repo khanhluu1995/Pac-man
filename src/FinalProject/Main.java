@@ -48,8 +48,7 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 //        mCanvas.heightProperty().addListener(event->resizable());
 //        mCanvas.widthProperty().bind(root.widthProperty());
 //        mCanvas.heightProperty().bind(root.heightProperty());
-        Maze maze = new Maze(mCanvas);
-        PacMan pacMan = new PacMan(mCanvas,maze,scene);
+        Maze maze = new Maze(mCanvas,scene);
         int numGhosts = 2;
         ArrayList<Ghost> ghosts = new ArrayList<>();
 

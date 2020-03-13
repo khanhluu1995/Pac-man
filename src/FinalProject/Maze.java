@@ -1,10 +1,14 @@
 package FinalProject;
 
 
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.event.EventHandler;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
@@ -21,10 +25,12 @@ public class Maze{
     Canvas mCanvas;
     double obstacleSize;
     int cake = 399;
+    Scene mScene;
+    PacMan pacMan;
+    AnimationTimer at;
 
 
-
-    public Maze(Canvas mCanvas) throws IOException {
+    public Maze(Canvas mCanvas, Scene scene) throws IOException {
         obstacleSize = mCanvas.getWidth()/actualMaze.length;
         graphicsContext = mCanvas.getGraphicsContext2D();
         GraphicsContext graphicsContext = mCanvas.getGraphicsContext2D();
@@ -35,6 +41,12 @@ public class Maze{
                 actualMaze[i][j] = new MazeObjects(false,true,true);
             }
         }
+        this.pacMan = new PacMan(mCanvas,this);
+
+        mScene = scene;
+        this.mCanvas =  mCanvas;
+        addlistener(mScene);
+
 
 
         readMap();
@@ -91,6 +103,165 @@ public class Maze{
         graphicsContext.fillRect(x,y,obstacleSize,obstacleSize);
         graphicsContext.restore();
         actualMaze[y/20][x/20].setCake(false);
+    }
+
+    private void addlistener(Scene scene){
+        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                switch (event.getCode()){
+                    case UP:
+                        if(!pacMan.moveTo.equals("up") && !pacMan.isMoving) {
+                            pacMan.moveTo = "up";
+                            move();
+                        }
+                        else {
+                            at.stop();
+                            pacMan.updatePos(pacMan.iPos-1,pacMan.jPos);
+                            pacMan.isMoving=false;
+                        }
+                        break;
+                    case DOWN:
+                        if(!pacMan.moveTo.equals("down")&& !pacMan.isMoving) {
+                            pacMan.moveTo = "down";
+                            move();
+                        }
+                        else {
+                            at.stop();
+                            pacMan.updatePos(pacMan.iPos+1,pacMan.jPos);
+                            pacMan.isMoving=false;
+
+                        }
+                        break;
+                    case LEFT:
+                        if(!pacMan.moveTo.equals("left")&& !pacMan.isMoving) {
+                            pacMan.moveTo = "left";
+                            move();
+                        }
+                        else {
+                            at.stop();
+                            pacMan.updatePos(pacMan.iPos,pacMan.jPos-1);
+                            pacMan.isMoving=false;
+                        }
+                        break;
+                    case RIGHT:
+                        if(!pacMan.moveTo.equals("right")&& !pacMan.isMoving) {
+                            pacMan.moveTo = "right";
+                            move();
+                        }
+                        else {
+                            at.stop();
+                            pacMan.updatePos(pacMan.iPos,pacMan.jPos+1);
+                            pacMan.isMoving=false;
+                        }
+                        break;
+
+                    default:
+                        System.out.println("Invalid Key Press!");
+                        break;
+                }
+            }
+        });
+    }
+
+    private void move(){
+
+        pacMan.isMoving = true;
+        at = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                switch (pacMan.moveTo) {
+                    case "up":
+                        if (pacMan.iPos - 1 >= 0 && !actualMaze[pacMan.iPos - 1][pacMan.jPos].getWall()) {
+
+                            pacMan.destination = pacMan.converter(pacMan.iPos-1);
+                            double distance = Math.abs(pacMan.y-pacMan.destination);
+                            if(distance!=0){
+                                pacMan.removeObject(pacMan.x,pacMan.y);
+                                pacMan.y--;
+                                pacMan.pacManMovement(pacMan.x,pacMan.y);
+//                              System.out.println(distance);
+                            }
+
+                            else if(distance == 0){
+
+                                pacMan.isMoving = false;
+                                System.out.println("pacman position move in pixels: " + pacMan.x + ", " + pacMan.y);
+                                pacMan.updatePos(pacMan.iPos - 1, pacMan.jPos);
+                            }
+
+                        } else {
+                            System.out.println("stuck");
+                            at.stop();
+                        }
+                        break;
+
+                    case "down":
+                        if (pacMan.iPos + 1 <= 19 && !actualMaze[pacMan.iPos + 1][pacMan.jPos].getWall()) {
+                            pacMan.destination = pacMan.converter(pacMan.iPos+1);
+                            double distance = Math.abs(pacMan.y-pacMan.destination);
+                            if(distance != 0){
+                                pacMan.removeObject(pacMan.x,pacMan.y);
+                                pacMan.y++;
+                                pacMan.pacManMovement(pacMan.x,pacMan.y);
+//                                System.out.println(distance);
+                            }
+
+                            else if(distance == 0){
+                                pacMan.isMoving = false;
+                                pacMan.updatePos(pacMan.iPos + 1, pacMan.jPos);
+                            }
+                        } else {
+                            System.out.println("stuck");
+                            at.stop();
+                        }
+                        break;
+
+                    case "right":
+                        if (pacMan.jPos + 1 <= 19 && !actualMaze[pacMan.iPos][pacMan.jPos + 1].getWall()) {
+                            pacMan.destination = pacMan.converter(pacMan.jPos+1);
+                            double distance = Math.abs(pacMan.x-pacMan.destination);
+                            if(distance != 0){
+                                pacMan.removeObject(pacMan.x,pacMan.y);
+                                pacMan.x++;
+                                pacMan.pacManMovement(pacMan.x,pacMan.y);
+//                                System.out.println(distance);
+                            }
+
+                            else if(distance == 0){
+                                pacMan.isMoving = false;
+                                pacMan.updatePos(pacMan.iPos, pacMan.jPos+ 1);
+                            }
+                        } else {
+                            System.out.println("stuck");
+                            at.stop();
+                        }
+                        break;
+
+                    case "left":
+                        if (pacMan.jPos - 1 >= 0 && !actualMaze[pacMan.iPos][pacMan.jPos - 1].getWall()) {
+                            pacMan.destination = pacMan.converter(pacMan.jPos-1);
+                            double distance = Math.abs(pacMan.x-pacMan.destination);
+                            if(distance != 0){
+                                pacMan.removeObject(pacMan.x,pacMan.y);
+                                pacMan.x--;
+                                pacMan.pacManMovement(pacMan.x,pacMan.y);
+//                                System.out.println(distance);
+                            }
+
+                            else if(distance == 0){
+                                pacMan.isMoving = false;
+                                pacMan.updatePos(pacMan.iPos, pacMan.jPos - 1);
+                            }
+                        } else {
+                            System.out.println("stuck");
+                            at.stop();
+                        }
+                        break;
+                }
+            }
+        };
+        at.start();
     }
 
 
