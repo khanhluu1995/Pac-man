@@ -5,6 +5,7 @@ import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -20,7 +21,7 @@ import java.util.Random;
 public class PacMan extends MazeMovableObjects implements Serializable {
     int life;
     String moveTo = "";
-    int points = 0;
+    SimpleIntegerProperty points = new SimpleIntegerProperty(0);
     int destination = 0;
 
 
@@ -31,20 +32,20 @@ public class PacMan extends MazeMovableObjects implements Serializable {
     }
 
 
-    @Override
-    protected void initialPosition() {
-        boolean isGoodPos = false;
-        while(!isGoodPos) {
-            Random random = new Random();
-            iPos = 6;
-            jPos = 14;
-
-            if(!maze.actualMaze[iPos][jPos].getWall()){
-                drawObject();
-                isGoodPos = true;
-            }
-        }
-    }
+//    @Override
+//    protected void initialPosition() {
+//        boolean isGoodPos = false;
+//        while(!isGoodPos) {
+//            Random random = new Random();
+//            iPos = 6;
+//            jPos = 14;
+//
+//            if(!maze.actualMaze[iPos][jPos].getWall()){
+//                drawObject();
+//                isGoodPos = true;
+//            }
+//        }
+//    }
 
     @Override
     protected void drawObject() {
@@ -121,7 +122,7 @@ public class PacMan extends MazeMovableObjects implements Serializable {
     protected boolean getPoints(){
         if(maze.actualMaze[iPos][jPos].getCake()){
             maze.actualMaze[iPos][jPos].setCake(false);
-            points++;
+            points.set(points.get()+1);
             return true;
         }
 

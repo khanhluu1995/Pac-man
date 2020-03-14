@@ -3,6 +3,8 @@ package FinalProject;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -24,6 +26,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.awt.*;
@@ -42,8 +45,8 @@ public class Main extends Application implements EventHandler<ActionEvent> {
     public void start(Stage primaryStage) throws Exception{
 
         root = new BorderPane();
-        scene = new Scene(root, 400, 425);
-        mCanvas = new Canvas(scene.getWidth(),scene.getHeight());
+        scene = new Scene(root, 400, 500);
+        mCanvas = new Canvas(scene.getWidth(),scene.getHeight()-100);
 //        mCanvas.widthProperty().addListener(event->resizable());
 //        mCanvas.heightProperty().addListener(event->resizable());
 //        mCanvas.widthProperty().bind(root.widthProperty());
@@ -58,24 +61,46 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 
 
 
-        Label mStatus = new Label("Everything is Copacetic");
-        ToolBar toolBar = new ToolBar(mStatus);
-        root.setBottom(toolBar);
+        //TOOLBAR SETUP
+        Label points_tb = new Label("Scores: " + maze.pacMan.points.get());
+        Label level_tb = new Label("Level: " +maze.level.get());
+        Label cake_tb = new Label("Cakes: " + maze.cake.get());
+        Font font = new Font("Arial", 15);
+        points_tb.setFont(font);
+        level_tb.setFont(font);
+        cake_tb.setFont(font);
+        ToolBar toolBar = new ToolBar();
+        toolBar.getItems().addAll(points_tb,level_tb,cake_tb);
+
+        maze.pacMan.points.addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                points_tb.setText("Scores: " + maze.pacMan.points.get());
+            }
+        });
+
+        maze.level.addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                level_tb.setText("Scores: " + maze.level.get());
+            }
+        });
+
+        maze.cake.addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                cake_tb.setText("Cakes: " + maze.cake.get());
+            }
+        });
+
+        //END TOOLBAR SETUP
+
         primaryStage.setTitle("AshMan");
         root.setTop(buildMenuBar());
         primaryStage.setScene(scene);
+        root.setBottom(toolBar);
+
         primaryStage.show();
-
-
-
-        //STARTED GAME
-//        AnimationTimer gameStarted = new AnimationTimer() {
-//            @Override
-//            public void handle(long now) {
-//                pacMan.processInput();
-//            }
-//        };
-//        gameStarted.start();
     }
 
 //    private void resizable(){

@@ -2,6 +2,7 @@ package FinalProject;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -22,7 +23,7 @@ public class Maze{
     GraphicsContext graphicsContext;
     Canvas mCanvas;
     double obstacleSize;
-    int cake = 399;
+    SimpleIntegerProperty cake = new SimpleIntegerProperty(399);
     Scene mScene;
     PacMan pacMan;
     AnimationTimer at;
@@ -30,7 +31,7 @@ public class Maze{
     String nextKey = "";
     int numGhosts = 2;
     ArrayList<Ghost> ghosts = new ArrayList<>();
-    int level = 1;
+    SimpleIntegerProperty level = new SimpleIntegerProperty(1);
 
 
 
@@ -69,7 +70,7 @@ public class Maze{
         graphicsContext.fillRect(x*20,y*20,obstacleSize,obstacleSize);
         graphicsContext.restore();
         actualMaze[y][x].setWall(true);
-        cake--;
+        cake.set(cake.get()-1);
     }
 
     private void drawCake(int y, int x){
@@ -269,7 +270,7 @@ public class Maze{
                         break;
                 }
                 if(pacMan.getPoints()){
-                    cake--;
+                    cake.set(cake.get()-1);
                 }
 //        System.out.println("pacman is at: " + pacMan.iPos + ", " + pacMan.jPos);
     }

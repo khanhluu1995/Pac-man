@@ -26,4 +26,8 @@ public class Ghost extends MazeMovableObjects implements Serializable {
         }
         else return false;
     }
+
+    protected void ghostMovement(){
+
+    }
 }
