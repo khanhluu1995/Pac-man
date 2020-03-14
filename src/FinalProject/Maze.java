@@ -1,6 +1,5 @@
 package FinalProject;
 
-
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -12,13 +11,12 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
+import javax.crypto.spec.PSource;
 import javax.swing.text.html.ImageView;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
-
-
 public class Maze{
     MazeObjects[][] actualMaze = new MazeObjects[20][20];
     GraphicsContext graphicsContext;
@@ -28,6 +26,13 @@ public class Maze{
     Scene mScene;
     PacMan pacMan;
     AnimationTimer at;
+    double distance = 0;
+    String nextKey = "";
+    int numGhosts = 2;
+    ArrayList<Ghost> ghosts = new ArrayList<>();
+    int level = 1;
+
+
 
 
     public Maze(Canvas mCanvas, Scene scene) throws IOException {
@@ -41,15 +46,21 @@ public class Maze{
                 actualMaze[i][j] = new MazeObjects(false,true,true);
             }
         }
-        this.pacMan = new PacMan(mCanvas,this);
 
         mScene = scene;
         this.mCanvas =  mCanvas;
         addlistener(mScene);
-
-
-
         readMap();
+        this.pacMan = new PacMan(mCanvas,this);
+        for (int i = 0; i < numGhosts; i++){
+            ghosts.add(new Ghost(mCanvas,this));
+        }
+        at =new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                move();
+            }
+        };
     }
 
     private void drawObstacle(int y, int x){
@@ -105,54 +116,53 @@ public class Maze{
         actualMaze[y/20][x/20].setCake(false);
     }
 
+
     private void addlistener(Scene scene){
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
                 switch (event.getCode()){
                     case UP:
-                        if(!pacMan.moveTo.equals("up") && !pacMan.isMoving) {
+                        if(!pacMan.moveTo.equals("up") && distance == 0) {
+                            at.start();
                             pacMan.moveTo = "up";
-                            move();
+                            nextKey = pacMan.moveTo;
                         }
-                        else {
-                            at.stop();
-                            pacMan.updatePos(pacMan.iPos-1,pacMan.jPos);
-                            pacMan.isMoving=false;
+                        else if( distance != 0){
+                            nextKey = "up";
                         }
                         break;
                     case DOWN:
-                        if(!pacMan.moveTo.equals("down")&& !pacMan.isMoving) {
+                        if(!pacMan.moveTo.equals("down")&& distance == 0) {
+                            at.start();
                             pacMan.moveTo = "down";
-                            move();
-                        }
-                        else {
-                            at.stop();
-                            pacMan.updatePos(pacMan.iPos+1,pacMan.jPos);
-                            pacMan.isMoving=false;
+                            nextKey = pacMan.moveTo;
 
+                        }
+                        else if( distance != 0){
+                            nextKey = "down";
                         }
                         break;
                     case LEFT:
-                        if(!pacMan.moveTo.equals("left")&& !pacMan.isMoving) {
+                        if(!pacMan.moveTo.equals("left")&& distance == 0) {
+                            at.start();
                             pacMan.moveTo = "left";
-                            move();
+                            nextKey = pacMan.moveTo;
+
                         }
-                        else {
-                            at.stop();
-                            pacMan.updatePos(pacMan.iPos,pacMan.jPos-1);
-                            pacMan.isMoving=false;
+                        else if( distance != 0){
+                            nextKey = "left";
                         }
                         break;
                     case RIGHT:
-                        if(!pacMan.moveTo.equals("right")&& !pacMan.isMoving) {
+                        if(!pacMan.moveTo.equals("right")&& distance == 0) {
+                            at.start();
                             pacMan.moveTo = "right";
-                            move();
+                            nextKey = pacMan.moveTo;
+
                         }
-                        else {
-                            at.stop();
-                            pacMan.updatePos(pacMan.iPos,pacMan.jPos+1);
-                            pacMan.isMoving=false;
+                        else if( distance != 0){
+                            nextKey = "right";
                         }
                         break;
 
@@ -166,27 +176,23 @@ public class Maze{
 
     private void move(){
 
-        pacMan.isMoving = true;
-        at = new AnimationTimer() {
-            @Override
-            public void handle(long now) {
                 switch (pacMan.moveTo) {
                     case "up":
                         if (pacMan.iPos - 1 >= 0 && !actualMaze[pacMan.iPos - 1][pacMan.jPos].getWall()) {
 
                             pacMan.destination = pacMan.converter(pacMan.iPos-1);
-                            double distance = Math.abs(pacMan.y-pacMan.destination);
+                            distance = Math.abs(pacMan.y-pacMan.destination);
                             if(distance!=0){
                                 pacMan.removeObject(pacMan.x,pacMan.y);
-                                pacMan.y--;
+                                pacMan.y --;
                                 pacMan.pacManMovement(pacMan.x,pacMan.y);
-//                              System.out.println(distance);
+                                pacMan.movingMouth(pacMan.x,pacMan.y,(int)distance,pacMan.moveTo);
                             }
 
                             else if(distance == 0){
 
-                                pacMan.isMoving = false;
-                                System.out.println("pacman position move in pixels: " + pacMan.x + ", " + pacMan.y);
+//                                System.out.println("pacman position move in pixels: " + pacMan.x + ", " + pacMan.y);
+                                pacMan.moveTo= nextKey;
                                 pacMan.updatePos(pacMan.iPos - 1, pacMan.jPos);
                             }
 
@@ -199,16 +205,16 @@ public class Maze{
                     case "down":
                         if (pacMan.iPos + 1 <= 19 && !actualMaze[pacMan.iPos + 1][pacMan.jPos].getWall()) {
                             pacMan.destination = pacMan.converter(pacMan.iPos+1);
-                            double distance = Math.abs(pacMan.y-pacMan.destination);
+                            distance = Math.abs(pacMan.y-pacMan.destination);
                             if(distance != 0){
                                 pacMan.removeObject(pacMan.x,pacMan.y);
                                 pacMan.y++;
                                 pacMan.pacManMovement(pacMan.x,pacMan.y);
-//                                System.out.println(distance);
+                                pacMan.movingMouth(pacMan.x,pacMan.y,(int)distance,pacMan.moveTo);
                             }
 
                             else if(distance == 0){
-                                pacMan.isMoving = false;
+                                pacMan.moveTo= nextKey;
                                 pacMan.updatePos(pacMan.iPos + 1, pacMan.jPos);
                             }
                         } else {
@@ -220,16 +226,18 @@ public class Maze{
                     case "right":
                         if (pacMan.jPos + 1 <= 19 && !actualMaze[pacMan.iPos][pacMan.jPos + 1].getWall()) {
                             pacMan.destination = pacMan.converter(pacMan.jPos+1);
-                            double distance = Math.abs(pacMan.x-pacMan.destination);
+                            distance = Math.abs(pacMan.x-pacMan.destination);
                             if(distance != 0){
                                 pacMan.removeObject(pacMan.x,pacMan.y);
                                 pacMan.x++;
                                 pacMan.pacManMovement(pacMan.x,pacMan.y);
+                                pacMan.movingMouth(pacMan.x,pacMan.y,(int)distance,pacMan.moveTo);
+
 //                                System.out.println(distance);
                             }
 
                             else if(distance == 0){
-                                pacMan.isMoving = false;
+                                pacMan.moveTo= nextKey;
                                 pacMan.updatePos(pacMan.iPos, pacMan.jPos+ 1);
                             }
                         } else {
@@ -241,17 +249,18 @@ public class Maze{
                     case "left":
                         if (pacMan.jPos - 1 >= 0 && !actualMaze[pacMan.iPos][pacMan.jPos - 1].getWall()) {
                             pacMan.destination = pacMan.converter(pacMan.jPos-1);
-                            double distance = Math.abs(pacMan.x-pacMan.destination);
+                            distance = Math.abs(pacMan.x-pacMan.destination);
                             if(distance != 0){
                                 pacMan.removeObject(pacMan.x,pacMan.y);
                                 pacMan.x--;
                                 pacMan.pacManMovement(pacMan.x,pacMan.y);
-//                                System.out.println(distance);
+                                pacMan.movingMouth(pacMan.x,pacMan.y,(int)distance,pacMan.moveTo);
                             }
 
                             else if(distance == 0){
-                                pacMan.isMoving = false;
+                                pacMan.moveTo= nextKey;
                                 pacMan.updatePos(pacMan.iPos, pacMan.jPos - 1);
+
                             }
                         } else {
                             System.out.println("stuck");
@@ -259,13 +268,9 @@ public class Maze{
                         }
                         break;
                 }
-            }
-        };
-        at.start();
+                if(pacMan.getPoints()){
+                    cake--;
+                }
+//        System.out.println("pacman is at: " + pacMan.iPos + ", " + pacMan.jPos);
     }
-
-
-
-
-
 }

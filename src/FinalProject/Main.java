@@ -49,12 +49,7 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 //        mCanvas.widthProperty().bind(root.widthProperty());
 //        mCanvas.heightProperty().bind(root.heightProperty());
         Maze maze = new Maze(mCanvas,scene);
-        int numGhosts = 2;
-        ArrayList<Ghost> ghosts = new ArrayList<>();
 
-        for (int i = 0; i < numGhosts; i++){
-            ghosts.add(new Ghost(mCanvas,maze));
-        }
 
 
 

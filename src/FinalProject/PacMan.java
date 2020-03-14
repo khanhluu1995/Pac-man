@@ -20,7 +20,6 @@ import java.util.Random;
 public class PacMan extends MazeMovableObjects implements Serializable {
     int life;
     String moveTo = "";
-    boolean isMoving = false;
     int points = 0;
     int destination = 0;
 
@@ -90,16 +89,46 @@ public class PacMan extends MazeMovableObjects implements Serializable {
 
     }
 
-    private void movingMouth(){
-//        graphicsContext.setFill(Color.YELLOW);
-//        graphicsContext.fillArc(0,0,150,150,30,300, );
+    protected void movingMouth(int x, int y, int countStage, String mouthDirection){
+
+        switch (mouthDirection) {
+            case "up":
+                    graphicsContext.setFill(Color.LIGHTBLUE);
+                    graphicsContext.fillPolygon(new double[]{x + maze.actualMaze.length/2,x+countStage,x+20-countStage}, new double[]{y+10,y,y},3);
+
+                break;
+            case "down":
+                graphicsContext.setFill(Color.LIGHTBLUE);
+                graphicsContext.fillPolygon(new double[]{x + maze.actualMaze.length/2,x+countStage,x+20-countStage},
+                                            new double[]{y+10,y+maze.actualMaze.length,y+maze.actualMaze.length},3);
+
+                break;
+            case "left" :
+                graphicsContext.setFill(Color.LIGHTBLUE);
+                graphicsContext.fillPolygon(new double[]{x + maze.actualMaze.length/2,x,x},
+                        new double[]{y+10,y+countStage,y+20-countStage},3);
+                break;
+            case "right" :
+                graphicsContext.setFill(Color.LIGHTBLUE);
+                graphicsContext.fillPolygon(new double[]{x + maze.actualMaze.length/2,x+maze.actualMaze.length,x+maze.actualMaze.length},
+                        new double[]{y+10,y+countStage,y+20-countStage},3);
+
+                break;
+        }
 
     }
-//    private boolean validDirection(String s){
-//        switch (s){
-//            case "up":
-//        }
-//    }
+
+    protected boolean getPoints(){
+        if(maze.actualMaze[iPos][jPos].getCake()){
+            maze.actualMaze[iPos][jPos].setCake(false);
+            points++;
+            return true;
+        }
+
+        else {
+            return false;
+        }
+    }
 
 
 
@@ -108,9 +137,5 @@ public class PacMan extends MazeMovableObjects implements Serializable {
         this.life = life;
     }
 
-
-    public void setMoving(boolean moving) {
-        isMoving = moving;
-    }
 
 }
