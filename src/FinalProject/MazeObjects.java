@@ -1,6 +1,8 @@
 package FinalProject;
 
-public class MazeObjects {
+import java.io.Serializable;
+
+public class MazeObjects implements Serializable {
     Boolean wall,blank,cake;
 
     public MazeObjects(Boolean wall, Boolean blank, Boolean cake) {

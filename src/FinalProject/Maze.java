@@ -13,9 +13,10 @@ import javafx.scene.paint.Color;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Scanner;
-public class Maze{
+public class Maze implements Serializable {
     MazeObjects[][] actualMaze = new MazeObjects[20][20];
     GraphicsContext graphicsContext;
     Canvas mCanvas;
@@ -180,9 +181,6 @@ public class Maze{
                             cheat();
                             break;
 
-                    default:
-                        System.out.println("Invalid Key Press!");
-                        break;
                 }
 
 
@@ -300,8 +298,33 @@ public class Maze{
             }
         }
         graphicsContext.restore();
-
-
     }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws IOException
+
+    {
+        out.defaultWriteObject();
+        out.writeObject(this.pacMan);
+        out.writeObject(this.actualMaze);
+        out.writeObject(this.mCanvas);
+        out.writeObject(cake);
+        out.writeObject(mScene);
+        out.writeObject(ghosts);
+        out.writeObject(level);
+    }
+
+    private void readObject(java.io.ObjectInputStream in)
+            throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        this.pacMan = (PacMan)in.readObject();
+        this.actualMaze = (MazeObjects[][]) in.readObject();
+        this.mCanvas = (Canvas) in.readObject();
+        this.cake = (SimpleIntegerProperty) in.readObject();
+        this.mScene = (Scene) in.readObject();
+        this.ghosts = (ArrayList<Ghost>) in.readObject();
+        this.level = (SimpleIntegerProperty) in.readObject();
+    }
+
+
 
 }

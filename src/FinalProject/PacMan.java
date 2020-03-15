@@ -22,7 +22,7 @@ import java.util.Random;
 public class PacMan extends MazeMovableObjects implements Serializable {
     boolean alive;
     String moveTo = "";
-    SimpleIntegerProperty points = new SimpleIntegerProperty(0);
+    public static SimpleIntegerProperty points = new SimpleIntegerProperty(0);
     int destination = 0;
 
 
