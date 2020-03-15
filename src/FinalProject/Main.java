@@ -28,18 +28,30 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import sun.management.snmp.jvminstr.JvmMemPoolEntryImpl;
 
 import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Optional;
+import java.util.prefs.Preferences;
 
 
 public class Main extends Application implements EventHandler<ActionEvent> {
 
 
 
+    MenuItem pauseMenuItem ;
+    MenuItem goMenuItem;
+    MenuItem openMenuItem ;
+    MenuItem saveMenuItem ;
+
     javafx.scene.canvas.Canvas mCanvas;
     BorderPane root;
     Scene scene;
+    Maze maze;
+    static int numGhosts;
+    static int numGhostsIncPerLevel;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -47,11 +59,13 @@ public class Main extends Application implements EventHandler<ActionEvent> {
         root = new BorderPane();
         scene = new Scene(root, 400, 500);
         mCanvas = new Canvas(scene.getWidth(),scene.getHeight()-100);
+        numGhosts = 2;
+        numGhostsIncPerLevel = 2;
 //        mCanvas.widthProperty().addListener(event->resizable());
 //        mCanvas.heightProperty().addListener(event->resizable());
 //        mCanvas.widthProperty().bind(root.widthProperty());
 //        mCanvas.heightProperty().bind(root.heightProperty());
-        Maze maze = new Maze(mCanvas,scene);
+        maze = new Maze(mCanvas,scene,numGhosts);
 
 
 
@@ -82,21 +96,49 @@ public class Main extends Application implements EventHandler<ActionEvent> {
         maze.level.addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                level_tb.setText("Scores: " + maze.level.get());
+
+                level_tb.setText("Level: " + maze.level.get());
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("you made it to level: " + maze.level.get());
+                alert.setTitle("Congratulation!");
+                alert.showAndWait();
+                if(alert.getResult() == ButtonType.OK){
+                    System.out.println("got it");
+                    onGo(goMenuItem,pauseMenuItem,openMenuItem,saveMenuItem);
+                }
+
             }
         });
 
         maze.cake.addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                if(maze.cake.get() == 0){
+                    maze.level.set(maze.level.get()+1);
+                    try {
+                        numGhosts+=numGhostsIncPerLevel;
+                        maze = new Maze(mCanvas,scene,numGhosts);
+                        goMenuItem.setDisable(false);
+                        pauseMenuItem.setDisable(true);
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+
+
+
+                }
                 cake_tb.setText("Cakes: " + maze.cake.get());
+
             }
         });
 
         //END TOOLBAR SETUP
 
+
         primaryStage.setTitle("AshMan");
-        root.setTop(buildMenuBar());
+        root.setTop(buildMenuBar(primaryStage));
         primaryStage.setScene(scene);
         root.setBottom(toolBar);
 
@@ -118,16 +160,54 @@ public class Main extends Application implements EventHandler<ActionEvent> {
         alert.showAndWait();
     }
 
-    private MenuBar buildMenuBar(){
+    private MenuBar buildMenuBar(Stage primaryStage){
 
         MenuBar menuBar = new MenuBar();
-        Menu menu = new Menu("_File");
+        Menu newMenu = new Menu("_File");
+        SeparatorMenuItem separator = new SeparatorMenuItem();
+        openMenuItem = new MenuItem("_Open");
+        openMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.CONTROL_DOWN));
+        openMenuItem.setOnAction(actionEvent->onOpen());
+        saveMenuItem = new MenuItem("_Save as");
+        saveMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN));
+        saveMenuItem.setOnAction(actionEvent->onSave());
 
         MenuItem quitMenuItem = new MenuItem(("_Quit"));
         quitMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN));
         quitMenuItem.setOnAction(actionEvent-> Platform.exit());
+        newMenu.getItems().addAll(openMenuItem,saveMenuItem,separator,quitMenuItem);
 
-        menu.getItems().add(quitMenuItem);
+        Menu gameMenu = new Menu("_Game");
+        SeparatorMenuItem gameSeparator1 = new SeparatorMenuItem();
+
+        SeparatorMenuItem gameSeparator2 = new SeparatorMenuItem();
+
+        MenuItem newMenuItem = new MenuItem("_New");
+        pauseMenuItem = new MenuItem("_Pause");
+        goMenuItem = new MenuItem("_Go");
+
+
+        newMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN));
+        newMenuItem.setOnAction(actionEvent-> {
+            try {
+                onNew(goMenuItem,pauseMenuItem);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        goMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.G, KeyCombination.CONTROL_DOWN));
+
+        goMenuItem.setOnAction(actionEvent->onGo(goMenuItem,pauseMenuItem,openMenuItem,saveMenuItem));
+        pauseMenuItem.setDisable(true);
+        pauseMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.P, KeyCombination.CONTROL_DOWN));
+        pauseMenuItem.setOnAction(actionEvent->onPause(goMenuItem,pauseMenuItem,openMenuItem,saveMenuItem));
+        MenuItem settingMenuItem = new MenuItem("_Setting");
+        settingMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.X, KeyCombination.CONTROL_DOWN));
+        settingMenuItem.setOnAction(actionEvent->onSetting());
+        gameMenu.getItems().addAll(newMenuItem,gameSeparator1,goMenuItem,pauseMenuItem,gameSeparator2,settingMenuItem);
+
+
+
 
         Menu helpMenu = new Menu("_Help");
         MenuItem aboutMenuItem = new MenuItem(" About");
@@ -135,7 +215,7 @@ public class Main extends Application implements EventHandler<ActionEvent> {
         helpMenu.getItems().add(aboutMenuItem);
 
 
-        menuBar.getMenus().addAll(menu,helpMenu);
+        menuBar.getMenus().addAll(newMenu,gameMenu,helpMenu);
 
         return menuBar;
     }
@@ -150,5 +230,60 @@ public class Main extends Application implements EventHandler<ActionEvent> {
     @Override
     public void handle(ActionEvent event) {
 
+    }
+
+    private void onOpen(){
+
+    }
+
+    private void onSave(){
+
+    }
+
+    private void onNew(MenuItem goMenuItem, MenuItem pauseMenuItem) throws IOException {
+        for(int i= 0; i<maze.ghosts.size();i++){
+            maze.ghosts.get(i).at.stop();
+        }
+        maze = new Maze(mCanvas,scene,numGhosts);
+        maze.cake.set(264);
+        goMenuItem.setDisable(false);
+        pauseMenuItem.setDisable(true);
+    }
+
+    private void onGo(MenuItem goMenuItem, MenuItem pauseMenuItem, MenuItem open, MenuItem save){
+        maze.isPause = false;
+        for (int i = 0; i < maze.ghosts.size();i++){
+            maze.ghosts.get(i).at.start();
+        }
+        goMenuItem.setDisable(true);
+        pauseMenuItem.setDisable(false);
+        open.setDisable(true);
+        save.setDisable(true);
+
+    }
+
+    private void onPause(MenuItem goMenuItem, MenuItem pauseMenuItem,MenuItem open, MenuItem save){
+        maze.isPause = true;
+        goMenuItem.setDisable(false);
+        pauseMenuItem.setDisable(true);
+        open.setDisable(false);
+        save.setDisable(false);
+    }
+
+    private void onSetting(){
+
+    }
+
+    public static void storePreferences(Class c){
+        Preferences pref = Preferences.userNodeForPackage(c);
+        pref.putInt("numGhostsPerLevel",numGhostsIncPerLevel);
+        pref.putInt("numGhosts",numGhosts);
+
+    }
+
+    public static void readPreferences(Class c){
+        Preferences pref = Preferences.userNodeForPackage(c);
+        numGhostsIncPerLevel = pref.getInt("numGhostsPerLevel",numGhostsIncPerLevel);
+        numGhosts = pref.getInt("numGhosts",numGhosts);
     }
 }

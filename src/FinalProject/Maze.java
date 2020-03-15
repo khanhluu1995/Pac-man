@@ -1,19 +1,16 @@
 package FinalProject;
 
 import javafx.animation.AnimationTimer;
-import javafx.application.Application;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
+import javafx.scene.control.Alert;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 
-import javax.crypto.spec.PSource;
-import javax.swing.text.html.ImageView;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,20 +20,20 @@ public class Maze{
     GraphicsContext graphicsContext;
     Canvas mCanvas;
     double obstacleSize;
-    SimpleIntegerProperty cake = new SimpleIntegerProperty(399);
+    static SimpleIntegerProperty cake= new SimpleIntegerProperty(0);;
     Scene mScene;
     PacMan pacMan;
     AnimationTimer at;
     double distance = 0;
     String nextKey = "";
-    int numGhosts = 2;
     ArrayList<Ghost> ghosts = new ArrayList<>();
-    SimpleIntegerProperty level = new SimpleIntegerProperty(1);
+    static SimpleIntegerProperty level = new SimpleIntegerProperty(1);
+    boolean isPause = true;
+    MySounds mySounds = new MySounds();
 
 
 
-
-    public Maze(Canvas mCanvas, Scene scene) throws IOException {
+    public Maze(Canvas mCanvas, Scene scene, int numGhosts) throws IOException {
         obstacleSize = mCanvas.getWidth()/actualMaze.length;
         graphicsContext = mCanvas.getGraphicsContext2D();
         GraphicsContext graphicsContext = mCanvas.getGraphicsContext2D();
@@ -44,7 +41,7 @@ public class Maze{
         graphicsContext.fillRect(0,0,mCanvas.getWidth(),mCanvas.getHeight());
         for (int i = 0; i < actualMaze.length; i++){
             for (int j = 0; j < actualMaze.length; j++){
-                actualMaze[i][j] = new MazeObjects(false,true,true);
+                actualMaze[i][j] = new MazeObjects(false,true,false);
             }
         }
 
@@ -54,14 +51,29 @@ public class Maze{
         readMap();
         this.pacMan = new PacMan(mCanvas,this);
         for (int i = 0; i < numGhosts; i++){
-            ghosts.add(new Ghost(mCanvas,this));
+            ghosts.add(new Ghost(mCanvas,this,pacMan));
         }
         at =new AnimationTimer() {
             @Override
             public void handle(long now) {
-                move();
+                if(pacMan.alive && !isPause) {
+                    move();
+                }
+                else if(isPause){
+                    at.stop();
+                }
+                //THIS ELSE IS EXECUTED AND ANNOUNCE THAT PAC-MAC WAS EATEN
+                else {
+                    at.stop();
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setHeaderText("Sorry, you were eaten");
+                    alert.setTitle("Game Over");
+                    alert.show();
+                }
+
             }
         };
+        mySounds.playClip(1);
     }
 
     private void drawObstacle(int y, int x){
@@ -70,14 +82,18 @@ public class Maze{
         graphicsContext.fillRect(x*20,y*20,obstacleSize,obstacleSize);
         graphicsContext.restore();
         actualMaze[y][x].setWall(true);
-        cake.set(cake.get()-1);
     }
 
     private void drawCake(int y, int x){
         graphicsContext.save();
         graphicsContext.setFill(Color.ORCHID);
         graphicsContext.fillOval(x*20+5,y*20+5,obstacleSize/2,obstacleSize/2);
+        actualMaze[y][x].setCake(true);
         graphicsContext.restore();
+    }
+
+    public void setPause(boolean pause) {
+        isPause = pause;
     }
 
     private void readMap() throws IOException {
@@ -93,6 +109,7 @@ public class Maze{
                     drawObstacle(i,j);
                 }else {
                     drawCake(i,j);
+                    cake.set(cake.get()+1);
                 }
                 i++;
                 j=0;
@@ -103,20 +120,12 @@ public class Maze{
                 }
                 else {
                     drawCake(i,j);
+                    cake.set(cake.get()+1);
                 }
                 j++;
             }
         }
     }//END OF READ MAP
-
-    public void removeCake(int x, int y){
-        graphicsContext.save();
-        graphicsContext.setFill(Color.LIGHTBLUE);
-        graphicsContext.fillRect(x,y,obstacleSize,obstacleSize);
-        graphicsContext.restore();
-        actualMaze[y/20][x/20].setCake(false);
-    }
-
 
     private void addlistener(Scene scene){
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -167,10 +176,16 @@ public class Maze{
                         }
                         break;
 
+                    case HOME:
+                            cheat();
+                            break;
+
                     default:
                         System.out.println("Invalid Key Press!");
                         break;
                 }
+
+
             }
         });
     }
@@ -198,7 +213,6 @@ public class Maze{
                             }
 
                         } else {
-                            System.out.println("stuck");
                             at.stop();
                         }
                         break;
@@ -219,7 +233,6 @@ public class Maze{
                                 pacMan.updatePos(pacMan.iPos + 1, pacMan.jPos);
                             }
                         } else {
-                            System.out.println("stuck");
                             at.stop();
                         }
                         break;
@@ -234,7 +247,6 @@ public class Maze{
                                 pacMan.pacManMovement(pacMan.x,pacMan.y);
                                 pacMan.movingMouth(pacMan.x,pacMan.y,(int)distance,pacMan.moveTo);
 
-//                                System.out.println(distance);
                             }
 
                             else if(distance == 0){
@@ -242,7 +254,6 @@ public class Maze{
                                 pacMan.updatePos(pacMan.iPos, pacMan.jPos+ 1);
                             }
                         } else {
-                            System.out.println("stuck");
                             at.stop();
                         }
                         break;
@@ -264,14 +275,33 @@ public class Maze{
 
                             }
                         } else {
-                            System.out.println("stuck");
                             at.stop();
                         }
                         break;
                 }
+
+                mySounds.playClip(2);
                 if(pacMan.getPoints()){
                     cake.set(cake.get()-1);
                 }
-//        System.out.println("pacman is at: " + pacMan.iPos + ", " + pacMan.jPos);
     }
+
+    private void cheat(){
+
+        graphicsContext.save();
+        graphicsContext.setFill(Color.LIGHTBLUE);
+        for(int i = 0; i < actualMaze.length;i++){
+            for (int j = 0; j < actualMaze.length;j++){
+                if(actualMaze[i][j].getCake()&& cake.get() > 1){
+                    actualMaze[i][j].setCake(false);
+                    cake.set(cake.get()-1);
+                    graphicsContext.fillRect(pacMan.converter(j), pacMan.converter(i), actualMaze.length,actualMaze.length);
+                }
+            }
+        }
+        graphicsContext.restore();
+
+
+    }
+
 }

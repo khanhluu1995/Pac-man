@@ -8,8 +8,6 @@ import javax.sound.sampled.Clip;
 
 public class MySounds {
 
-	protected static final String AudioPlayer = null;
-	
 	public Clip PacBeginning  = loadClip("/Sounds/pacman_beginning.wav");
 	public Clip PacChomp      = loadClip("/Sounds/pacman_chomp.wav");
 	public Clip PacGhostEat   = loadClip("/Sounds/pacman_eatghost.wav");

@@ -39,9 +39,12 @@ public abstract class MazeMovableObjects {
         graphicsContext.setFill(Color.ORANGERED);
         graphicsContext.fillOval(x,y,maze.actualMaze.length,maze.actualMaze.length);
         graphicsContext.restore();
-
-        System.out.println("ghost position in pixels: " + x + ", " + y);
-
+    }
+    protected void updatePos(int update_i, int update_j){
+        this.iPos = update_i;
+        this.jPos = update_j;
+        setX(jPos);
+        setY(iPos);
     }
 
     public int converter(int pos) {

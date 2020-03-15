@@ -5,6 +5,7 @@ import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -19,7 +20,7 @@ import java.io.Serializable;
 import java.util.Random;
 
 public class PacMan extends MazeMovableObjects implements Serializable {
-    int life;
+    boolean alive;
     String moveTo = "";
     SimpleIntegerProperty points = new SimpleIntegerProperty(0);
     int destination = 0;
@@ -27,25 +28,16 @@ public class PacMan extends MazeMovableObjects implements Serializable {
 
     public PacMan(Canvas mCanvas, Maze maze) {
         super(mCanvas,maze);
-        this.life = 2;
+        alive = true;
         initialPosition();
     }
 
-
-//    @Override
-//    protected void initialPosition() {
-//        boolean isGoodPos = false;
-//        while(!isGoodPos) {
-//            Random random = new Random();
-//            iPos = 6;
-//            jPos = 14;
-//
-//            if(!maze.actualMaze[iPos][jPos].getWall()){
-//                drawObject();
-//                isGoodPos = true;
-//            }
-//        }
-//    }
+    @Override
+    protected void initialPosition() {
+        super.initialPosition();
+        maze.actualMaze[iPos][jPos].setCake(false);
+        maze.cake.set(maze.cake.get()-1);
+    }
 
     @Override
     protected void drawObject() {
@@ -54,15 +46,10 @@ public class PacMan extends MazeMovableObjects implements Serializable {
         graphicsContext.save();
         graphicsContext.setFill(Color.YELLOW);
         graphicsContext.fillOval(x,y,maze.actualMaze.length,maze.actualMaze.length);
-        System.out.println("pacman position: " + iPos + ", " + jPos);
-        System.out.println("pacman position in pixels: " + x + ", " + y);
+//        System.out.println("pacman position: " + iPos + ", " + jPos);
+//        System.out.println("pacman position in pixels: " + x + ", " + y);
         graphicsContext.restore();
     }
-
-
-
-
-
 
     protected void pacManMovement(double x, double y){
         graphicsContext.save();
@@ -78,16 +65,6 @@ public class PacMan extends MazeMovableObjects implements Serializable {
         graphicsContext.setFill(Color.LIGHTBLUE);
         graphicsContext.fillRect(x,y,maze.actualMaze.length,maze.actualMaze.length);
         graphicsContext.restore();
-    }
-
-    protected void updatePos(int update_i, int update_j){
-//        removeObject(jPos * 20, iPos * 20);
-        this.iPos = update_i;
-        this.jPos = update_j;
-        setX(jPos);
-        setY(iPos);
-//        drawObject();
-
     }
 
     protected void movingMouth(int x, int y, int countStage, String mouthDirection){
@@ -129,13 +106,6 @@ public class PacMan extends MazeMovableObjects implements Serializable {
         else {
             return false;
         }
-    }
-
-
-
-
-    public void setLife(int life) {
-        this.life = life;
     }
 
 
