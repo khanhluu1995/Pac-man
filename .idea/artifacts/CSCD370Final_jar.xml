@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="CSCD370Final:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/CSCD370Final_jar</output-path>
+    <root id="archive" name="CSCD370Final.jar">
+      <element id="module-output" name="CSCD370Final" />
+    </root>
+  </artifact>
+</component>

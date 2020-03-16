@@ -7,7 +7,6 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 
@@ -98,7 +97,7 @@ public class Maze implements Serializable {
     }
 
     private void readMap() throws IOException {
-        File file = new File("maze");
+        File file = new File("map/maze.txt");
         Scanner scanner = new Scanner(file);
         int i = 0;
         int j = 0;
@@ -303,11 +302,11 @@ public class Maze implements Serializable {
     private void writeObject(java.io.ObjectOutputStream out) throws IOException
 
     {
-//        out.defaultWriteObject();
+        out.defaultWriteObject();
         out.writeObject(this.pacMan);
         out.writeObject(this.actualMaze);
 //        out.writeObject(this.mCanvas);
-        out.writeObject(cake.get());
+//        out.writeObject(cake.get());
 //        out.writeObject(mScene);
         out.writeObject(ghosts);
 //        out.writeObject(level);
@@ -315,11 +314,11 @@ public class Maze implements Serializable {
 
     private void readObject(java.io.ObjectInputStream in)
             throws IOException, ClassNotFoundException {
-//        in.defaultReadObject();
+        in.defaultReadObject();
         this.pacMan = (PacMan)in.readObject();
         this.actualMaze = (MazeObjects[][]) in.readObject();
 //        this.mCanvas = (Canvas) in.readObject();
-        this.cake.set((int)in.readObject());
+//        this.cake.set((int)in.readObject());
 //        this.mScene = (Scene) in.readObject();
         this.ghosts = (ArrayList<Ghost>) in.readObject();
 //        this.level = (SimpleIntegerProperty) in.readObject();
