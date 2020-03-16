@@ -12,9 +12,9 @@ import java.util.Random;
 public class Ghost extends MazeMovableObjects implements Serializable {
 
     int initMovement;
-    Random random;
+    transient Random random;
     String direction = "";
-    AnimationTimer at;
+    transient AnimationTimer at;
     int destination = 0;
     int speed;
 

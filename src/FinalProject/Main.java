@@ -134,10 +134,6 @@ public class Main extends Application implements EventHandler<ActionEvent> {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-
-
-
-
                 }
                 cake_tb.setText("Cakes: " + maze.cake.get());
 
@@ -262,9 +258,8 @@ public class Main extends Application implements EventHandler<ActionEvent> {
         }
         catch (IOException | ClassNotFoundException ex) {
 // TODO: report the problem somehow
-            Logger.getLogger(Main.class.getName())
-
-                    .log(Level.SEVERE, "Open Exception", ex.getMessage());
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, "Open Exception", ex.getMessage());
+            ex.printStackTrace();
             return;
 
         }
@@ -290,10 +285,7 @@ public class Main extends Application implements EventHandler<ActionEvent> {
             } catch (Exception e) {
                 Logger.getLogger(Main.class.getName()).log(Level.SEVERE, "Save Exception", e.getMessage());
                 e.printStackTrace();
-
             }
-
-
         }
 
     }

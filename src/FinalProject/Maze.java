@@ -18,19 +18,19 @@ import java.util.ArrayList;
 import java.util.Scanner;
 public class Maze implements Serializable {
     MazeObjects[][] actualMaze = new MazeObjects[20][20];
-    GraphicsContext graphicsContext;
-    Canvas mCanvas;
+    transient GraphicsContext graphicsContext;
+    transient Canvas mCanvas;
     double obstacleSize;
     static SimpleIntegerProperty cake= new SimpleIntegerProperty(0);;
-    Scene mScene;
+    transient Scene mScene;
     PacMan pacMan;
-    AnimationTimer at;
+    transient AnimationTimer at;
     double distance = 0;
     String nextKey = "";
     ArrayList<Ghost> ghosts = new ArrayList<>();
-    static SimpleIntegerProperty level = new SimpleIntegerProperty(1);
+    static transient SimpleIntegerProperty level = new SimpleIntegerProperty(1);
     boolean isPause = true;
-    MySounds mySounds = new MySounds();
+    transient MySounds mySounds = new MySounds();
 
 
 
@@ -303,26 +303,26 @@ public class Maze implements Serializable {
     private void writeObject(java.io.ObjectOutputStream out) throws IOException
 
     {
-        out.defaultWriteObject();
+//        out.defaultWriteObject();
         out.writeObject(this.pacMan);
         out.writeObject(this.actualMaze);
-        out.writeObject(this.mCanvas);
-        out.writeObject(cake);
-        out.writeObject(mScene);
+//        out.writeObject(this.mCanvas);
+        out.writeObject(cake.get());
+//        out.writeObject(mScene);
         out.writeObject(ghosts);
-        out.writeObject(level);
+//        out.writeObject(level);
     }
 
     private void readObject(java.io.ObjectInputStream in)
             throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
+//        in.defaultReadObject();
         this.pacMan = (PacMan)in.readObject();
         this.actualMaze = (MazeObjects[][]) in.readObject();
-        this.mCanvas = (Canvas) in.readObject();
-        this.cake = (SimpleIntegerProperty) in.readObject();
-        this.mScene = (Scene) in.readObject();
+//        this.mCanvas = (Canvas) in.readObject();
+        this.cake.set((int)in.readObject());
+//        this.mScene = (Scene) in.readObject();
         this.ghosts = (ArrayList<Ghost>) in.readObject();
-        this.level = (SimpleIntegerProperty) in.readObject();
+//        this.level = (SimpleIntegerProperty) in.readObject();
     }
 
 

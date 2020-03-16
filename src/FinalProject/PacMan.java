@@ -16,7 +16,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcType;
 import javafx.util.Duration;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class PacMan extends MazeMovableObjects implements Serializable {
@@ -106,6 +108,22 @@ public class PacMan extends MazeMovableObjects implements Serializable {
         else {
             return false;
         }
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws IOException
+
+    {
+        out.defaultWriteObject();
+        out.writeObject(this.points.get());
+
+
+
+    }
+
+    private void readObject(java.io.ObjectInputStream in)
+            throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        this.points.set((int)in.readObject());
     }
 
 
